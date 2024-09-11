@@ -4,9 +4,13 @@ import os
 import azure.functions as func
 from azure.identity import DefaultAzureCredential
 from azure.mgmt.containerservice import ContainerServiceClient
+from shared.holiday_check import is_holiday
 
 
 def main(stopakstimer: func.TimerRequest) -> None:
+    if is_holiday():
+        logging.info("Today is a holiday. Skipping AKS cluster stop operation.")
+        return
 
     SUBSCRIPTION_ID = os.environ["AZURE_SUBSCRIPTION_ID"]
     AKS_RESOURCE_GROUP = os.environ["AKS_RESOURCE_GROUP"]

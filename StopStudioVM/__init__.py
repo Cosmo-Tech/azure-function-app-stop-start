@@ -5,11 +5,15 @@ import os
 import azure.functions as func
 from azure.common.credentials import ServicePrincipalCredentials
 from azure.mgmt.compute import ComputeManagementClient
+from shared.holiday_check import is_holiday
 
 from msrestazure.azure_exceptions import CloudError
 
 
 def main(mytimer: func.TimerRequest) -> None:
+    if is_holiday():
+        logging.info("Today is a holiday. Skipping VM stop operation.")
+        return
 
     azure_subscription = os.environ["AZURE_SUBSCRIPTION_ID"]
     resource_group_name = os.environ["VM_RESOURCE_GROUP"]

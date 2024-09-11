@@ -4,9 +4,13 @@ import requests
 import os
 import azure.functions as func
 from azure.identity import DefaultAzureCredential
+from shared.holiday_check import is_holiday
 
 
 def main(mytimer: func.TimerRequest) -> None:
+    if is_holiday():
+        logging.info("Today is a holiday. Skipping POWERBI resume operation.")
+        return
 
     azure_subscription = os.environ["AZURE_SUBSCRIPTION_ID"]
     resource_group_name = os.environ["POWERBI_RESOURCE_GROUP"]

@@ -5,9 +5,13 @@ import json
 import azure.functions as func
 from azure.identity import DefaultAzureCredential
 from azure.mgmt.kusto import KustoManagementClient
+from shared.holiday_check import is_holiday
 
 
 def main(stopadxtimer: func.TimerRequest) -> None:
+    if is_holiday():
+        logging.info("Today is a holiday. Skipping ADX stop operation.")
+        return
 
     SUBSCRIPTION_ID = os.environ["AZURE_SUBSCRIPTION_ID"]
     ADX_CLUSTERS_CONFIG = json.loads(os.environ["ADX_CLUSTERS_CONFIG"])
@@ -17,7 +21,7 @@ def main(stopadxtimer: func.TimerRequest) -> None:
     
     utc_timestamp = datetime.datetime.utcnow().replace(
         tzinfo=datetime.timezone.utc).isoformat()
-
+    
     for cluster_config in ADX_CLUSTERS_CONFIG:
         resource_group = cluster_config['resource_group']
         cluster_name = cluster_config['cluster_name']

@@ -8,3 +8,4 @@ azure-mgmt-kusto
 azure-identity
 azure-mgmt-resource
 azure-mgmt-compute
+holidays
